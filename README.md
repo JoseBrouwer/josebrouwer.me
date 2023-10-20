@@ -17,10 +17,10 @@
  - Flask
  - SQLite3
 
-##Once you have installed the necessary software, you can clone the repository and install the dependencies:
+## Once you have installed the necessary software, you can clone the repository and install the dependencies:
 
-''' 
+```
 git clone https://gitlab.com/jose-brouwer-website/josebrouwer.me.git
 cd josebrouwer.me
 pip install -r requirements.txt 
-'''
+```
