@@ -2,6 +2,7 @@
 
 import json
 import requests
+import sqlite3
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 
@@ -77,26 +78,35 @@ def home():
 
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
-    url = "https://hacker-news.firebaseio.com/v0/topstories.json"
+    # Connect to the database.
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
 
-    response = requests.get(url)
-    
-    if response.status_code == 200:
-        data  = response.json()
+    # Retrieve the 30 most recent items from the database.
+    cursor.execute('SELECT * FROM new_stories')
+    results = cursor.fetchall()
 
-        """ Commented Sections below are HTML implementation """
-        stories_dicts = [] #dict of stories in dictionary/json format
+    # Convert the results to a list of dictionaries.
+    news_feed = []
+    for item in results[:30]:
+        news_feed.append({
+            'by': item[0],
+            'descendants': item[6],
+            'id': item[1],
+            #'kids': item[3],
+            'score': item[2],
+            'time': item[3],
+            'title': item[4],
+            'type': item[7], 
+            'url': item[5]
+        })
 
-        for ID in data[:30]: #iterate through news
-            url = ('https://hacker-news.firebaseio.com/v0/item/'+str(ID)+'.json?print=pretty')
-            the_story = requests.get(url) #get the story by ID using url
-            the_story_dict = the_story.json() #set story to json format
-            stories_dicts.append(the_story_dict) #add story to list
-        return jsonify(stories_dicts)
-    else: 
-        #data = []
-        return jsonify({"error": "Failed to fetch data from the Hacker News API"}), 500
-    #return render_template("newsfeed.html", session=session.get('user'), stories=stories_dicts)
+    # Close the database connection.
+    connection.close()
 
+    # Return the news feed as JSON.
+    json_news = json.dumps(news_feed, indent=4)
+    return json_news
+    #return jsonify(news_feed)
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
