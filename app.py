@@ -51,7 +51,42 @@ def login():
 def callback():
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
+    data = session.get('user')
+
+    insert_user_into_db(data) #insert to db
+
     return redirect("/")
+
+def insert_user_into_db(session):
+    """
+    This functions inputs new users into the db
+    Params: session is the dictionary returned by Auth0
+    Returns: None, commits to db
+    """
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    #Check if the user already exists in the table
+    cursor.execute('SELECT * FROM users WHERE email = ?', (session.get('userinfo', {}).get('email'),))
+    existing_user = cursor.fetchone()
+
+    if not existing_user:
+        # Insert the user into the "users" table
+        cursor.execute(
+            '''
+            INSERT INTO users (email, name, nickname, picture)
+            VALUES (?, ?, ?, ?)
+            ''',
+            (
+                session.get('userinfo', {}).get('email', ''),
+                session.get('userinfo', {}).get('name', ''),
+                session.get('userinfo', {}).get('nickname', ''),
+                session.get('userinfo', {}).get('picture', ''),
+            )
+        )
+
+    connection.commit()
+    connection.close()
 
 # 👆 We're continuing from the steps above. Append this to your server.py file.
 
@@ -76,6 +111,13 @@ def logout():
 def home():
     return render_template("index.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
 
+@app.route("/profile")
+def profile():
+
+    user_info = session.get('user', {}).get('userinfo', {})
+
+    return render_template("profile.html", user_info=user_info)
+
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
     # Connect to the database.
@@ -95,6 +137,7 @@ def news():
             'id': item[1],
             #'kids': item[3],
             'score': item[2],
+            'text': item[8],
             'time': item[3],
             'title': item[4],
             'type': item[7], 

@@ -26,11 +26,11 @@ def insert_data_into_db(data):
     cursor.execute('DELETE FROM new_stories;')
 
     for item in data:
-        cursor.execute('''INSERT INTO new_stories (id, by, descendants, score, time, title, url, type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', (item.get('id', ''), item.get('by', ''), 
+        cursor.execute('''INSERT INTO new_stories (id, by, descendants, score, time, title, url, type, text)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', (item.get('id', ''), item.get('by', ''), 
             item.get('descendants', 0), item.get('score', ''), item.get('time', ''), 
-            item.get('title', ''), item.get('url', ''), item.get('type', ''))
-        )    
+            item.get('title', ''), item.get('url', ''), item.get('type', ''), item.get('text', ''))
+        )
 
     connection.commit()
     connection.close()
