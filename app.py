@@ -8,7 +8,7 @@ from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, render_template, session, url_for, jsonify
+from flask import Flask, redirect, render_template, session, url_for, jsonify, request
 from login import login_required
 import math
 #import logging
@@ -165,12 +165,12 @@ def display():
         end_index = start_index + ITEMS_PER_PAGE
 
     # Retrieve the 30 most recent items from the database.
-    cursor.execute('SELECT * FROM new_stories LIMIT ?, ?', (start_index, ITEMS_PER_PAGE))
+    cursor.execute('SELECT * FROM new_stories')
     results = cursor.fetchall()
 
     # Convert the results to a list of dictionaries.
     news_feed = []
-    for item in results:
+    for item in results[start_index:end_index]:
         news_feed.append({
             'by': item[0],
             'descendants': item[6],
@@ -193,4 +193,4 @@ def display():
     return render_template("news.html", news_feed=news_feed, current_page=page, total_pages=total_pages)
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
