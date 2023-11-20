@@ -1,0 +1,71 @@
+/* styles.css */
+
+/* Reset some default styles */
+/*body, h1, h2, h3, p {
+    margin: 0;
+    padding: 0;
+}*/
+body {
+    background-color: #333;
+    color: #fff;
+}
+
+header {
+    background-color: #264653;
+    color: #fff;
+}
+
+nav {
+    background-color: #2a9d8f;
+}
+
+nav a {
+    color: #fff;
+}
+
+footer {
+    background-color: #264653;
+    color: #fff;
+}
+
+.custom-card{
+    max-width: 80%;
+    margin: 0 auto;
+}
+.center-align{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+.jumbotron{
+    background-color: #000;
+    color: #fff;
+    padding: 80px;
+    border-radius: 0.6rem;
+}
+
+.jumbotron .btn {
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+
+/* Apply styles to all links */
+a {
+    color: #007bff; /* Set link color */
+    text-decoration: none; /* Remove underline by default */
+    outline: none;
+}
+
+/* Apply styles to visited links */
+a:visited {
+    color: #purple; /* Set color for visited links */
+}
+
+/* Apply styles on hover */
+a:active,
+a:hover {
+    text-decoration: blink; /* Add underline on hover */
+}
+
