@@ -1,6 +1,7 @@
 import requests
 import sqlite3
 from datetime import datetime
+from operator import itemgetter
 
 def convert_time(epoch_time):
     # Convert Unix epoch time to datetime
@@ -26,7 +27,13 @@ def get_hacker_news_data():
             the_story_dict = the_story.json()
             stories_dicts.append(the_story_dict)
 
-        return stories_dicts
+        # First, sort the news items by 'score' in ascending order
+        stories_dicts.sort(key=itemgetter('score'))
+
+        # Then, sort by 'time' in descending order (newest first)
+        sorted_news = sorted(stories_dicts, key=itemgetter('time'), reverse=True)
+
+        return sorted_news
     else:
         return []
 
