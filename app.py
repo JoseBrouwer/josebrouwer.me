@@ -172,8 +172,7 @@ def display():
     news_feed = []
     for item in results[start_index:end_index]:
         item_id = item[1]
-        like_count = get_likes_db(item_id)
-        dislike_count = get_dislikes_db(item_id)
+        like_count, dislike_count = get_likes_dislikes_db(item_id)
         news_feed.append({
             'by': item[0],
             'descendants': item[6],
@@ -206,42 +205,93 @@ def like_story():
     connection = sqlite3.connect('stories.db')
     cursor = connection.cursor()
     
-    # Validate if the story exists
-    cursor.execute('SELECT id FROM new_stories WHERE id = ?', (story_id,))
-    if not cursor.fetchone():
+    # Check if the user has already liked or disliked this story
+    cursor.execute('SELECT * FROM new_stories WHERE id = ?', (story_id,))
+    story_record = cursor.fetchone()
+
+    if story_record:
+        story_data = {
+            'by': story_record[0],
+            'id': story_record[1],
+            'score': story_record[2],
+            'time': story_record[3],
+            'title': story_record[4],
+            'url': story_record[5],
+            'descendants': story_record[6],
+            'type': story_record[7],
+            'text': story_record[8]
+        }
+
+        # Check if there's already an entry for this story and user
+        cursor.execute('SELECT liked, disliked FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+        record = cursor.fetchone()
+
+        if record:
+            # Update the like/dislike status and story information for the existing record
+            cursor.execute('''
+                UPDATE story_likes
+                SET liked = ?, 
+                    disliked = ?, 
+                    by = ?, 
+                    score = ?, 
+                    time = ?, 
+                    title = ?, 
+                    url = ?, 
+                    descendants = ?, 
+                    type = ?, 
+                    text = ?
+                WHERE story_id = ? AND user_email = ?
+            ''', (True, 
+                  False, 
+                  story_data['by'], 
+                  story_data['score'], 
+                  story_data['time'], 
+                  story_data['title'], 
+                  story_data['url'], 
+                  story_data['descendants'], 
+                  story_data['type'], 
+                  story_data['text'], 
+                  story_id, 
+                  user_email))
+        else:
+            # Insert a new record with the like/dislike status and story information
+            cursor.execute('''
+                INSERT INTO story_likes (story_id, 
+                                         user_email, 
+                                         liked, 
+                                         disliked, 
+                                         by, 
+                                         score, 
+                                         time, 
+                                         title, 
+                                         url, 
+                                         descendants, 
+                                         type, 
+                                         text)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (story_id, 
+                  user_email, 
+                  True, 
+                  False, 
+                  story_data['by'], 
+                  story_data['score'], 
+                  story_data['time'], 
+                  story_data['title'], 
+                  story_data['url'], 
+                  story_data['descendants'], 
+                  story_data['type'], 
+                  story_data['text']))
+
+        # Commit changes and close connection
+        connection.commit()
+        connection.close()
+    else:
         connection.close()
         return jsonify({'status': 'error', 'message': 'Story not found'}), 404
 
-    # Check if the user has already liked or disliked this story
-    cursor.execute('SELECT liked, disliked FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
-    record = cursor.fetchone()
-    
-    if record:
-        # Update the existing record
-        cursor.execute('UPDATE story_likes SET liked = ?, disliked = ? WHERE story_id = ? AND user_email = ?', (True, False, story_id, user_email))
-    else:
-        # Insert a new record
-        cursor.execute('INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, ?, ?)', (story_id, user_email, True, False))
-    
-    connection.commit()
-    connection.close()
-
-    like_count = get_likes_db(story_id)
-    dislike_count = get_dislikes_db(story_id)
-
+    like_count, dislike_count = get_likes_dislikes_db(story_id)
 
     return jsonify({'status': 'success', 'like_count': like_count, 'dislike_count': dislike_count})
-
-def get_likes_db(story_id):
-    connection = sqlite3.connect('stories.db')
-    cursor = connection.cursor()
-
-    cursor.execute('SELECT COUNT(*) FROM story_likes WHERE story_id = ? AND liked = True AND disliked = False', (story_id,))
-    likes_count = cursor.fetchone()[0]
-
-    connection.close()
-
-    return likes_count
 
 @app.route("/dislike_story", methods=["POST"])
 @login_required
@@ -252,40 +302,109 @@ def dislike_story():
     connection = sqlite3.connect('stories.db')
     cursor = connection.cursor()
     
-    # Validate if the story exists
-    cursor.execute('SELECT id FROM new_stories WHERE id = ?', (story_id,))
-    if not cursor.fetchone():
+    # Check if the user has already liked or disliked this story
+    cursor.execute('SELECT * FROM new_stories WHERE id = ?', (story_id,))
+    story_record = cursor.fetchone()
+
+    if story_record:
+        story_data = {
+            'by': story_record[0],
+            'id': story_record[1],
+            'score': story_record[2],
+            'time': story_record[3],
+            'title': story_record[4],
+            'url': story_record[5],
+            'descendants': story_record[6],
+            'type': story_record[7],
+            'text': story_record[8]
+        }
+
+        # Check if there's already an entry for this story and user
+        cursor.execute('SELECT liked, disliked FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+        record = cursor.fetchone()
+
+        if record:
+            # Update the like/dislike status and story information for the existing record
+            cursor.execute('''
+                UPDATE story_likes
+                SET liked = ?, 
+                    disliked = ?, 
+                    by = ?, 
+                    score = ?, 
+                    time = ?, 
+                    title = ?, 
+                    url = ?, 
+                    descendants = ?, 
+                    type = ?, 
+                    text = ?
+                WHERE story_id = ? AND user_email = ?
+            ''', (False, 
+                  True, 
+                  story_data['by'], 
+                  story_data['score'], 
+                  story_data['time'], 
+                  story_data['title'], 
+                  story_data['url'], 
+                  story_data['descendants'], 
+                  story_data['type'], 
+                  story_data['text'], 
+                  story_id, 
+                  user_email))
+        else:
+            # Insert a new record with the like/dislike status and story information
+            cursor.execute('''
+                INSERT INTO story_likes (story_id, 
+                                         user_email, 
+                                         liked, 
+                                         disliked, 
+                                         by, 
+                                         score, 
+                                         time, 
+                                         title, 
+                                         url, 
+                                         descendants, 
+                                         type, 
+                                         text)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (story_id, 
+                  user_email, 
+                  False, 
+                  True, 
+                  story_data['by'], 
+                  story_data['score'], 
+                  story_data['time'], 
+                  story_data['title'], 
+                  story_data['url'], 
+                  story_data['descendants'], 
+                  story_data['type'], 
+                  story_data['text']))
+
+        # Commit changes and close connection
+        connection.commit()
+        connection.close()
+    else:
         connection.close()
         return jsonify({'status': 'error', 'message': 'Story not found'}), 404
 
-    # Check if the user has already liked or disliked this story
-    cursor.execute('SELECT liked, disliked FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
-    record = cursor.fetchone()
-    
-    if record:
-        # Update the existing record
-        cursor.execute('UPDATE story_likes SET liked = ?, disliked = ? WHERE story_id = ? AND user_email = ?', (False, True, story_id, user_email))
-    else:
-        # Insert a new record
-        cursor.execute('INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, ?, ?)', (story_id, user_email, False, True))
-    
-    connection.commit()
-    connection.close()
+    like_count, dislike_count = get_likes_dislikes_db(story_id)
 
-    dislike_count = get_dislikes_db(story_id)
+    return jsonify({'status': 'success', 'like_count': like_count, 'dislike_count': dislike_count})
 
-    return jsonify({'status': 'success', 'dislike_count': dislike_count})
-
-def get_dislikes_db(story_id):
+def get_likes_dislikes_db(story_id):
     connection = sqlite3.connect('stories.db')
     cursor = connection.cursor()
 
-    cursor.execute('SELECT COUNT(*) FROM story_likes WHERE story_id = ? AND liked = False AND disliked = True', (story_id,))
+    # Get the count of likes
+    cursor.execute('SELECT COUNT(*) FROM story_likes WHERE story_id = ? AND liked = True', (story_id,))
+    likes_count = cursor.fetchone()[0]
+
+    # Get the count of dislikes
+    cursor.execute('SELECT COUNT(*) FROM story_likes WHERE story_id = ? AND disliked = True', (story_id,))
     dislikes_count = cursor.fetchone()[0]
 
     connection.close()
 
-    return dislikes_count
+    return likes_count, dislikes_count
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
