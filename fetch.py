@@ -13,7 +13,6 @@ def convert_time(epoch_time):
     return formatted_time
 
 def get_hacker_news_data():
-    print("retrieved news")
     url = "https://hacker-news.firebaseio.com/v0/topstories.json"
     response = requests.get(url)
 
@@ -33,12 +32,12 @@ def get_hacker_news_data():
         # Then, sort by 'time' in descending order (newest first)
         sorted_news = sorted(stories_dicts, key=itemgetter('time'), reverse=True)
 
+        print("retrieved news")
         return sorted_news
     else:
         return []
 
 def insert_data_into_db(data):
-    print("inserted news in db")
     connection = sqlite3.connect('stories.db')
     cursor = connection.cursor()
 
@@ -56,6 +55,7 @@ def insert_data_into_db(data):
 
     connection.commit()
     connection.close()
+    print("inserted news in db")
 
 if __name__ == "__main__":
     news_data = get_hacker_news_data()

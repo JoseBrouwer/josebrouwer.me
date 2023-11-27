@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
             handleStoryInteraction(this.dataset.id, false);  // false for dislike
         });
     });
+
+    //Event listener for delete buttons
+    var deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            deleteStory(this.dataset.id);
+        });
+    });
 });
 
 // Handle both Like and Dislike actions
@@ -37,6 +45,31 @@ function handleStoryInteraction(storyId, isLike) {
         } else {
             // Handle error
             console.error('Failed to ' + (isLike ? 'like' : 'dislike') + ' story with ID:', storyId);
+        }
+    }).catch(error => {
+        // Handle network error
+        console.error('Network error:', error);
+    });
+}
+
+// Handle the Delete action
+function deleteStory(storyId) {
+    fetch('/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ story_id: storyId })
+    }).then(response => {
+        return response.json();
+    }).then(data => {
+        if (data.status === 'success') {
+            // Remove the story card from the UI or refresh the page
+            document.querySelector('.custom-card[data-id="' + storyId + '"]').remove();
+            console.log('Deleted story with ID:', storyId);
+        } else {
+            // Handle error
+            console.error('Failed to delete like/dislike for story with ID:', storyId);
         }
     }).catch(error => {
         // Handle network error

@@ -27,7 +27,14 @@ footer {
     background-color: #264653;
     color: #fff;
 }
-
+.card-header.like{
+    background-color: #198754;
+    color: #fff;
+}
+.card-header.dislike {
+    background-color: #dc3545;
+    color: #fff;
+}
 .custom-card{
     max-width: 80%;
     margin: 0 auto;
@@ -50,17 +57,17 @@ footer {
     cursor: pointer;
 }
 
+.logo {
+    max-height: 50px;
+    max-width: 50px;
+}
+
 
 /* Apply styles to all links */
 a {
     color: #007bff; /* Set link color */
     text-decoration: none; /* Remove underline by default */
     outline: none;
-}
-
-/* Apply styles to visited links */
-a:visited {
-    color: #purple; /* Set color for visited links */
 }
 
 /* Apply styles on hover */

@@ -109,8 +109,38 @@ def home():
 def profile():
 
     user_info = session.get('user', {}).get('userinfo', {})
+    user_email = user_info.get('email')
 
-    return render_template("profile.html", user_info=user_info)
+    # Connect to the database.
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Retrieve liked stories by the user
+    cursor.execute('SELECT * FROM story_likes WHERE user_email = ?', (user_email,))
+    liked_stories = cursor.fetchall()
+
+    # Convert the results to a list of dictionaries.
+    liked_feed = []
+    for item in liked_stories:
+        liked_feed.append({
+            'by': item[4],
+            'descendants': item[9],
+            'id': item[0],
+            'score': item[5],
+            'text': item[11],
+            'time': item[6],
+            'title': item[7],
+            'type': item[10],
+            'url': item[8],
+            'liked': item[2],  
+            'disliked': item[3]  
+        })
+
+    # Close the database connection.
+    connection.close()
+
+    # Render the profile template with the liked stories
+    return render_template("profile.html", user_info=user_info, liked_feed=liked_feed)
 
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
@@ -406,5 +436,23 @@ def get_likes_dislikes_db(story_id):
 
     return likes_count, dislikes_count
 
+@app.route("/delete", methods=["POST"])
+@login_required
+def delete_like_dislike():
+    data = request.json
+    story_id = data.get('story_id')
+    user_email = session.get('user', {}).get('userinfo', {}).get('email')
+
+    # Connect to the database
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Delete the like/dislike entry
+    cursor.execute('DELETE FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+    connection.commit()
+    connection.close()
+
+    return jsonify({'status': 'success'})
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=Tru   e)
