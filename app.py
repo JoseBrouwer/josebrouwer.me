@@ -455,4 +455,4 @@ def delete_like_dislike():
     return jsonify({'status': 'success'})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=Tru   e)
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
