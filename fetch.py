@@ -42,7 +42,7 @@ def insert_data_into_db(data):
     cursor = connection.cursor()
 
     # Truncate the table before inserting new data.
-    cursor.execute('DELETE FROM new_stories;')
+    cursor.execute('DELETE FROM new_stories')
 
     for item in data:
         epoch_time = item.get('time', '') #get time
