@@ -142,6 +142,52 @@ def profile():
     # Render the profile template with the liked stories
     return render_template("profile.html", user_info=user_info, liked_feed=liked_feed)
 
+@app.route("/admin")
+@login_required
+def admin():
+    user_info = session.get('user', {}).get('userinfo', {})
+    user_email = user_info.get('email')
+
+    # Connect to the database.
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Check if the user is an admin
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (user_email,))
+    user_admin = cursor.fetchone()[0]
+
+    if not user_admin:
+        # Redirect non-admin users to a different page, e.g., profile or home
+        return redirect(url_for('display'))
+
+    # Fetch all liked/disliked stories for admin view
+    cursor.execute('SELECT * FROM story_likes')
+    stories = cursor.fetchall()
+
+    # Convert the results to a list of dictionaries.
+    stories_feed = []
+    for item in stories:
+        stories_feed.append({
+            'by': item[4],
+            'descendants': item[9],
+            'id': item[0],
+            'score': item[5],
+            'text': item[11],
+            'time': item[6],
+            'title': item[7],
+            'type': item[10],
+            'url': item[8],
+            'liked': item[2],  
+            'disliked': item[3],
+            'user_email': item[1]
+        })
+
+    # Close the database connection.
+    connection.close()
+
+    # Render the admin template with the stories feed
+    return render_template("admin.html", user_info=user_info, stories_feed=stories_feed)
+
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
     # Connect to the database.
@@ -448,7 +494,19 @@ def delete_like_dislike():
     cursor = connection.cursor()
 
     # Delete the like/dislike entry
-    cursor.execute('DELETE FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+    # cursor.execute('DELETE FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+    
+    # Check if the user is an admin
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (user_email,))
+    user_admin = cursor.fetchone()[0]
+
+    if user_admin:
+        # If user is an admin, delete any entry with the story_id
+        cursor.execute('DELETE FROM story_likes WHERE story_id = ?', (story_id,))
+    else:
+        # If user is not an admin, delete only their own like/dislike entry
+        cursor.execute('DELETE FROM story_likes WHERE story_id = ? AND user_email = ?', (story_id, user_email))
+
     connection.commit()
     connection.close()
 

@@ -1,36 +1,37 @@
-<!-- templates/profile.html -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
-    <title>User Profile</title>
+    <title>Admin view</title>
 </head>
+
 <body>
-    {% include 'navbar.html' %} 
+    {% include 'navbar.html' %}
 
     <div class="container my-5">
-        <h1 class="center-align">Profile: {{user_info.name}}</h1>
-        <div><img class="center-align" src="{{ user_info.picture }}" alt="{{ user_info.name }}'s Picture"></div>
-        {% for item in liked_feed %}
+        <h1 class="center-align">Admin Dashboard</h1>
+        {% for item in stories_feed %}
         <div class="custom-card" data-id="{{ item.id }}">
             <div class="card mb-3">
                 {% if item.liked %}
-                    <div class="card-header like">
-                        <h2 class="card-title">{{ item.title }}</h2>
-                    </div>
+                <div class="card-header like">
+                    <h2 class="card-title">{{ item.title }}</h2>
+                </div>
                 {% elif item.disliked %}
-                    <div class="card-header dislike">
-                        <h2 class="card-title">{{ item.title }}</h2>
-                    </div>
+                <div class="card-header dislike">
+                    <h2 class="card-title">{{ item.title }}</h2>
+                </div>
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-subtitle mb-2 text-muted">
+                        <strong>Liked/Disliked by:</strong> {{ item.user_email }}
+                        <br>
                         <strong>Author:</strong> {{ item.by }}
                         <br>
                         <strong>Hacker News Score:</strong> {{ item.score }}
@@ -39,15 +40,9 @@
                         <br>
                         <strong>Link:</strong> <a href="{{ item.url }}" target="_blank" class="btn btn-info">{{ item.url }}</a>
                     </h5>
-                    <p class="card-text">{{ item.text|safe }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- {% if item.liked %}
-                        <button type="button" class="btn btn-success" data-id="{{ item.id }}">Liked</button>
-                        {% elif item.disliked %}
-                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}">Disiked</button>
-                        {% endif %} -->
-                        <button type="button" class="btn btn-outline-danger delete-button" data-id="{{ item.id }}">Delete</button>
-                    </div>
+                    <!-- Delete button -->
+                    <button type="button" class="btn btn-outline-danger delete-button"
+                        data-id="{{ item.id }}">Delete</button>
                 </div>
             </div>
         </div>
@@ -60,4 +55,3 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
-
