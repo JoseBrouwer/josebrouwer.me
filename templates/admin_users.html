@@ -15,14 +15,34 @@
     {% include 'navbar.html' %}
 
     <div class="container my-5">
-        <h1 class="center-align">Admin Dashboard</h1>
-        <h2 class="center-align">Select a Filter for Admin Actions</h2>
+        <h1 class="center-align">User Management</h1>
         <!-- Navigation for different admin tasks -->
         <div class="admin-nav text-center my-4">
             <a href="{{ url_for('admin_items') }}" class="btn btn-primary btn-lg mx-2">Manage Likes/Dislikes</a>
             <a href="{{ url_for('admin_users') }}" class="btn btn-warning btn-lg mx-2">Manage Users</a>
         </div>
-
+        <div id="alert-placeholder"></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger delete-user-button"
+                            data-email="{{ user.email }}">Delete User</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
@@ -30,4 +50,5 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 </body>
+
 </html>

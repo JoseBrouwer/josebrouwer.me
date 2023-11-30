@@ -34,6 +34,41 @@ oauth.register(
     server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
 )
 
+# def get_auth0_token():
+#     auth0_domain = env.get("AUTH0_DOMAIN")
+#     url = f"https://{auth0_domain}/oauth/token"
+#     payload = {
+#         "client_id": env.get("AUTH0_CLIENT_ID"),
+#         "client_secret": env.get("AUTH0_CLIENT_SECRET"),
+#         "audience": f"https://{auth0_domain}/api/v2/",
+#         "grant_type": "client_credentials"
+#     }
+#     response = requests.post(url, json=payload)
+#     return response.json().get("access_token")
+
+# def get_auth0_user_id(email, token):
+#     auth0_domain = os.environ.get("AUTH0_DOMAIN")
+#     url = f"https://{auth0_domain}/api/v2/users-by-email"
+#     headers = {"Authorization": f"Bearer {token}"}
+#     params = {"email": email}
+
+#     response = requests.get(url, headers=headers, params=params)
+
+#     if response.status_code == 200:
+#         users = response.json()
+#         if users:
+#             # Assuming the email is unique and returns only one user
+#             return users[0].get("user_id")
+#     return None
+
+
+# def delete_auth0_user(user_id, token):
+#     auth0_domain = env.get("AUTH0_DOMAIN")
+#     url = f"https://{auth0_domain}/api/v2/users/{user_id}"
+#     headers = {"Authorization": f"Bearer {token}"}
+#     response = requests.delete(url, headers=headers)
+#     return response.status_code
+
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -145,6 +180,11 @@ def profile():
 @app.route("/admin")
 @login_required
 def admin():
+    return render_template("admin.html")
+
+@app.route("/admin/items")
+@login_required
+def admin_items():
     user_info = session.get('user', {}).get('userinfo', {})
     user_email = user_info.get('email')
 
@@ -186,7 +226,36 @@ def admin():
     connection.close()
 
     # Render the admin template with the stories feed
-    return render_template("admin.html", user_info=user_info, stories_feed=stories_feed)
+    return render_template("admin_items.html", user_info=user_info, stories_feed=stories_feed)
+
+@app.route("/admin/users")
+@login_required
+def admin_users():
+    user_info = session.get('user', {}).get('userinfo', {})
+    user_email = user_info.get('email')
+
+    # Connect to the database
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Check if the user is an admin
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (user_email,))
+    if cursor.fetchone()[0] == 0:
+        return redirect(url_for('profile'))  # Redirect non-admins to the profile page
+
+    # Fetch all users from the database
+    cursor.execute('SELECT * FROM users')
+    users = cursor.fetchall()
+    user_list = []
+    for user in users: 
+        user_list.append({
+            'email': user[1], 
+            'name': user[2]
+        })
+    connection.close()
+
+    return render_template("admin_users.html", users=user_list, user_info=user_info)
+
 
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
@@ -511,6 +580,40 @@ def delete_like_dislike():
     connection.close()
 
     return jsonify({'status': 'success'})
+
+@app.route("/delete_user", methods=["GET","POST"])
+@login_required
+def delete_user():
+    data = request.json
+    user_email = data.get('email')
+
+    # Connect to the database
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Check if the current user is an admin
+    current_user_email = session.get('user', {}).get('userinfo', {}).get('email')
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (current_user_email,))
+    if cursor.fetchone()[0] == 0:
+        return jsonify({'status': 'unauthorized'}), 403
+
+    # Delete the user's likes/dislikes
+    cursor.execute('DELETE FROM story_likes WHERE user_email = ?', (user_email,))
+
+    # Delete the user
+    cursor.execute('DELETE FROM users WHERE email = ?', (user_email,))
+
+    # # Delete user from Auth0
+    # token = get_auth0_token()
+    # auth0_user_id = get_auth0_user_id(user_email, token)
+    # if auth0_user_id:
+    #     delete_auth0_user(auth0_user_id, token)
+
+    connection.commit()
+    connection.close()
+
+    return jsonify({'status': 'success'})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)

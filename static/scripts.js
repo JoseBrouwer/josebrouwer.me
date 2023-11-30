@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', function () {
             deleteStory(this.dataset.id);
         });
     });
+
+    //Event listener for deleting a user
+    document.querySelector('.container.my-5').addEventListener('click', function (event) {
+        // Check if the clicked element has the class 'delete-user-button'
+        if (event.target.classList.contains('delete-user-button')) {
+            var userEmail = event.target.getAttribute('data-email');
+            deleteUser(userEmail);
+        }
+    });
 });
 
 // Handle both Like and Dislike actions
@@ -75,4 +84,51 @@ function deleteStory(storyId) {
         // Handle network error
         console.error('Network error:', error);
     });
+}
+
+function deleteUser(userEmail) {
+    if (confirm("Are you sure you want to delete this user and all their data?")) {
+        fetch('/delete_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: userEmail })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    //location.reload();  // Reload after a delay
+                    showAlert('User successfully deleted. Reloading in 5 seconds...', 'success');  // Show success alert
+                    setTimeout(function () {
+                        location.reload();  // Reload after a delay
+                    }, 5000);  //5 seconds
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error deleting user', 'danger');  // Show error alert
+            });
+    }
+}
+
+function showAlert(message, type) {
+    var alertPlaceholder = document.getElementById('alert-placeholder');
+    var alert = document.createElement('div');
+    alert.className = 'alert alert-' + type + ' alert-dismissible fade show';
+    alert.role = 'alert';
+    alert.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    alertPlaceholder.appendChild(alert);
+
+    // Optional: remove the alert after a few seconds
+    setTimeout(function () {
+        alert.remove();
+    }, 5000);
 }
