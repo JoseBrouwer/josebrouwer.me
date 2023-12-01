@@ -97,13 +97,14 @@ def callback():
     """
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
+    data = session.get("user")
 
-    insert_user_into_db()  # insert to db
+    insert_user_into_db(data)  # insert to db
 
     return redirect("/")
 
 
-def insert_user_into_db():
+def insert_user_into_db(data):
     """
     Inserts new user information into the database.
 
@@ -111,7 +112,7 @@ def insert_user_into_db():
     Extracts user information from the session and inserts it into the 'users' table.
     Commits changes to the database and closes the connection.
     """
-    data = session.get("user")
+    #data = session.get("user")
     connection = sqlite3.connect("stories.db")
     cursor = connection.cursor()
 
