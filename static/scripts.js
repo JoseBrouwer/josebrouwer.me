@@ -113,7 +113,7 @@ function deleteUser(userEmail) {
             .then(data => {
                 if (data.status === 'success') {
                     //location.reload();  // Reload after a delay
-                    showAlert('User successfully deleted. Reloading in 5 seconds...', 'success');  // Show success alert
+                    showAlert('User successfully deleted. Reloading in 3 seconds...', 'success');  // Show success alert
                     setTimeout(function () {
                         location.reload();  // Reload after a delay
                     }, 3000);  //3 seconds
