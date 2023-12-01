@@ -36,6 +36,10 @@ from dotenv import find_dotenv, load_dotenv
 from flask import Flask, redirect, render_template, session, url_for, jsonify, request
 from login import login_required, admin_required
 
+class TestingConfig:
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+
 ITEMS_PER_PAGE = 10
 
 ENV_FILE = find_dotenv()
