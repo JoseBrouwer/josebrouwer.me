@@ -31,6 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
             deleteUser(userEmail);
         }
     });
+
+    //Event listener for deleting a news item
+    var deleteNewsButtons = document.querySelectorAll('.delete-news-button');
+    deleteNewsButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var newsId = this.getAttribute('data-id');
+            deleteNewsItem(newsId);
+        });
+    });
 });
 
 // Handle both Like and Dislike actions
@@ -107,7 +116,7 @@ function deleteUser(userEmail) {
                     showAlert('User successfully deleted. Reloading in 5 seconds...', 'success');  // Show success alert
                     setTimeout(function () {
                         location.reload();  // Reload after a delay
-                    }, 5000);  //5 seconds
+                    }, 3000);  //3 seconds
                 }
             })
             .catch(error => {
@@ -131,4 +140,31 @@ function showAlert(message, type) {
     setTimeout(function () {
         alert.remove();
     }, 5000);
+}
+
+function deleteNewsItem(newsId) {
+    if (confirm("Are you sure you want to delete this news item?")) {
+        fetch('/delete_news_item', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ news_id: newsId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Remove the news item from the UI or refresh the page
+                    showAlert('News Item successfully deleted. Reloading in 3 seconds...', 'success');
+                    setTimeout(function () {
+                        location.reload();  // Reload after a delay
+                    }, 3000);  //3 seconds
+                    console.log('Deleted news item with ID:', newsId);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error deleting news item', 'danger');  // Show error alert
+            });
+    }
 }

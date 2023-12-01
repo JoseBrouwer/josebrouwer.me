@@ -256,6 +256,52 @@ def admin_users():
 
     return render_template("admin_users.html", users=user_list, user_info=user_info)
 
+@app.route("/admin/news", methods=["GET"])
+@login_required
+def admin_news():
+    user_info = session.get('user', {}).get('userinfo', {})
+    user_email = user_info.get('email')
+
+    # Connect to the database
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Check if the user is an admin
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (user_email,))
+    if cursor.fetchone()[0] == 0:
+        return redirect(url_for('profile'))  # Redirect non-admins
+
+    page = request.args.get('page', 1, type=int)
+    start_index = (page - 1) * ITEMS_PER_PAGE
+    end_index = start_index + ITEMS_PER_PAGE
+
+    # Fetch news items for the current page
+    cursor.execute('SELECT * FROM new_stories')
+    results = cursor.fetchall()
+
+    news_feed = []
+    for item in results[start_index:end_index]:
+        item_id = item[1]
+        like_count, dislike_count = get_likes_dislikes_db(item_id)
+        news_feed.append({
+            'by': item[0],
+            'descendants': item[6],
+            'id': item[1],
+            'score': item[2],
+            'text': item[8],
+            'time': item[3],
+            'title': item[4],
+            'type': item[7],
+            'url': item[5],
+            'like_count': like_count,
+            'dislike_count': dislike_count
+        })
+
+    total_pages = math.ceil(len(results) / ITEMS_PER_PAGE)
+
+    connection.close()
+    return render_template("admin_news.html", news_feed=news_feed, current_page=page, total_pages=total_pages, user_info=user_info)
+
 
 @app.route("/newsfeed", methods=["GET", "POST"])
 def news():
@@ -613,6 +659,34 @@ def delete_user():
     connection.close()
 
     return jsonify({'status': 'success'})
+
+@app.route("/delete_news_item", methods=["POST"])
+@login_required
+def delete_news_item():
+    data = request.json
+    news_id = data.get('news_id')
+
+    # Connect to the database
+    connection = sqlite3.connect('stories.db')
+    cursor = connection.cursor()
+
+    # Check if the user is an admin
+    current_user_email = session.get('user', {}).get('userinfo', {}).get('email')
+    cursor.execute('SELECT admin FROM users WHERE email = ?', (current_user_email,))
+    if cursor.fetchone()[0] == 0:
+        return jsonify({'status': 'unauthorized'}), 403
+
+    # Delete the news item's likes/dislikes
+    cursor.execute('DELETE FROM story_likes WHERE story_id = ?', (news_id,))
+
+    # Delete the news item
+    cursor.execute('DELETE FROM new_stories WHERE id = ?', (news_id,))
+
+    connection.commit()
+    connection.close()
+
+    return jsonify({'status': 'success'})
+
 
 
 if __name__ == "__main__":
