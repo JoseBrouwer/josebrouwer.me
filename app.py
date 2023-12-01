@@ -74,6 +74,16 @@ def login():
         redirect_uri=url_for("callback", _external=True)
     )
 
+@app.route("/signup")
+def signup():
+    """
+    Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
+    """
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True),
+        screen_hint="signup"
+    )
+
 
 @app.route("/new_user")
 def prompt():

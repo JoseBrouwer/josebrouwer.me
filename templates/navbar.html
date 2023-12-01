@@ -41,9 +41,10 @@
           </ul>
           <div class="d-flex align-items-center">
             {% if session %}
-            <a class="btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
+            <a class="btn btn-danger navbar-btn" href="{{ url_for('logout') }}">Logout</a>
             {% else %}
-            <a class="btn btn-success" href="{{ url_for('login') }}">Login</a>
+            <a class="btn btn-success navbar-btn" href="{{ url_for('signup') }}">Sign Up</a>
+            <a class="btn btn-primary navbar-btn" href="{{ url_for('login') }}">Login</a>
             {% endif %}
           </div>
         </div>
