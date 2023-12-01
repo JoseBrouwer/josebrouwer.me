@@ -1,17 +1,49 @@
-import pytest
-from app import app as flask_app
-from app import get_likes_dislikes_db
+"""
+Module: test_app.py
+
+This module contains unit tests for the Flask web application. 
+It tests various aspects of the application, including database connections, 
+route responses, and specific functionalities like user insertion and like/dislike counts.
+
+Functions:
+- get_db_connection: Establishes and returns a connection to the SQLite database.
+- add_admin: Inserts an admin user into the database for testing purposes.
+- delete_admin: Deletes an admin user from the database after testing.
+- app: A pytest fixture to create and configure a new Flask app instance for each test.
+- test_client: A pytest fixture to create a test client for the Flask app.
+- test_admin_user: A pytest fixture to set up an admin user in the database for testing.
+- test_db_connection: Tests the database connection.
+- test_home_page: Tests the home page route of the Flask application.
+- test_newsfeed_route: Tests the '/newsfeed' route of the application.
+- user_exists: Helper function to check if a user exists in the database.
+- test_insert_user_into_db: Tests the insertion of a new user into the database.
+- add_story_likes_for_testing: Helper function to add likes/dislikes to a story for testing.
+- test_get_likes_dislikes_db: Tests the function that retrieves like/dislike counts from the
+     database.
+"""
+
 import sqlite3
 import os
 import json
+import pytest
+from app import app as flask_app
+from app import get_likes_dislikes_db, insert_user_into_db
 
 
 def get_db_connection():
+    """
+    Establishes and returns a connection to the SQLite database specified by the
+    environment variable.
+    """
     db_path = os.getenv("/home/jose/project", "stories.db")
     return sqlite3.connect(db_path)
 
 
 def add_admin():
+    """
+    Inserts an admin user into the database for testing purposes.
+    Checks if the admin user already exists to avoid duplicates.
+    """
     conn = sqlite3.connect("/home/jose/project/stories.db")
     cursor = conn.cursor()
 
@@ -32,6 +64,9 @@ def add_admin():
 
 
 def delete_admin():
+    """
+    Deletes the admin user from the database after testing is complete.
+    """
     conn = sqlite3.connect("/home/jose/project/stories.db")
     cursor = conn.cursor()
 
@@ -43,7 +78,10 @@ def delete_admin():
 
 @pytest.fixture
 def app():
-    """Create and configure a new app instance for each test."""
+    """
+    Pytest fixture to create and configure a new Flask app instance for each test.
+    Modifies the app configuration for testing purposes.
+    """
     # Modify app.config here if flask_app doesn't use TestingConfig by default
     # flask_app.config.from_object('config.TestingConfig')  # If you use a separate config file
     # Or, directly set the config
@@ -55,13 +93,20 @@ def app():
 
 @pytest.fixture
 def test_client(app):
-    """A test client for the app."""
+    """
+    Pytest fixture to create a test client for the Flask app.
+    Allows for testing of Flask routes without running the server.
+    """
     return app.test_client()
 
 
 # Fixture to set up an admin user in the database
 @pytest.fixture(scope="module")
 def test_admin_user():
+    """
+    Pytest fixture to set up an admin user in the database for module-scope tests.
+    Adds an admin user at the beginning and cleans up by deleting the user after the tests.
+    """
     # add admin to db
     add_admin()
 
@@ -72,6 +117,9 @@ def test_admin_user():
 
 
 def test_db_connection():
+    """
+    Tests connection to the stories database
+    """
     conn = sqlite3.connect("/home/jose/project/stories.db")
     # Perform test operations
     conn.close()
@@ -86,16 +134,16 @@ def test_home_page(test_client):
     response = test_client.get("/")
     assert response.status_code == 200
 
+
 def test_newsfeed_route(test_client):
     """
     GIVEN a Flask application
     WHEN the '/newsfeed' route is requested (GET)
     THEN check that the response is valid and contains the expected JSON data
     """
-    # Optional: Insert predefined news items into the database here
 
     # Make a GET request to the '/newsfeed' route
-    response = test_client.get('/newsfeed')
+    response = test_client.get("/newsfeed")
 
     # Check that the response status code is 200 (OK)
     assert response.status_code == 200
@@ -107,7 +155,12 @@ def test_newsfeed_route(test_client):
     assert isinstance(data, list)
     assert len(data) <= 30  # Assuming it should return up to 30 items
 
+
 def user_exists(email):
+    """
+    Checks if a user exists in the database
+    For tetsing user additions to db
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
@@ -115,39 +168,45 @@ def user_exists(email):
     conn.close()
     if not user:
         return False
-    else:
-        return True
+    return True
+
 
 def test_insert_user_into_db(test_client, app):
+    """
+    GIVEN a Flask application
+    WHEN a new user logs into the website
+    THEN check that the user was added correctly
+    """
     with app.app_context():
         # Mock user data
         user_data = {
-            'email': 'test@example.com',
-            'name': 'Test User',
-            'nickname': 'Test',
-            'picture': 'http://example.com/test.jpg'
+            "email": "test@example.com",
+            "name": "Test User",
+            "nickname": "Test",
+            "picture": "http://example.com/test.jpg",
         }
 
         # Set the session for the mock user
         with test_client.session_transaction() as sess:
-            sess['user'] = {'userinfo': user_data}
+            sess["user"] = {"userinfo": user_data}
 
-        data = sess.get('user', {})
+        data = sess.get("user", {})
         # Call the function to test
-        from app import insert_user_into_db
+
         insert_user_into_db(data)
 
-        email = sess.get('user', {}).get('userinfo', {}).get('email', None)
+        email = sess.get("user", {}).get("userinfo", {}).get("email", None)
         # Assert that the user was inserted
         assert user_exists(email)
-        
+
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM users WHERE email = ?", ('test@example.com',))
+        cursor.execute("DELETE FROM users WHERE email = ?", ("test@example.com",))
         conn.commit()
         conn.close()
 
-def add_story_likes_for_testing(conn, story_id, likes, dislikes):
+
+def add_story_likes_for_testing(conn, story_id):
     """
     Helper function to add likes/dislikes to the story_likes table for testing.
     """
@@ -162,28 +221,49 @@ def add_story_likes_for_testing(conn, story_id, likes, dislikes):
 
     cursor.execute(
         "SELECT * FROM story_likes WHERE user_email = ? AND liked = True",
-        ('admin@example.com',),
+        ("admin@example.com",),
     )
     existing_like = cursor.fetchone()
 
     cursor.execute(
         "SELECT * FROM story_likes WHERE user_email = ? AND disliked = True",
-        ('admin2@example.com',),
+        ("admin2@example.com",),
     )
     existing_dislike = cursor.fetchone()
 
     if not existing_story:
-        cursor.execute("INSERT INTO new_stories (by, id, score, time, title, url) VALUES (?, ?, 0, 0, ?, ?)", ('test', story_id, 'TEST_ENTRY', 'test',))
-    
+        cursor.execute(
+            "INSERT INTO new_stories (by, id, score, time, title, url) VALUES (?, ?, 0, 0, ?, ?)",
+            (
+                "test",
+                story_id,
+                "TEST_ENTRY",
+                "test",
+            ),
+        )
+
     if not existing_like:
-        cursor.execute("INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, 1, 0)", (story_id, 'admin@example.com',))
-    
+        cursor.execute(
+            "INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, 1, 0)",
+            (
+                story_id,
+                "admin@example.com",
+            ),
+        )
+
     if not existing_dislike:
-        cursor.execute("INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, 0, 1)", (story_id, 'admin2@example.com',))
-    
+        cursor.execute(
+            "INSERT INTO story_likes (story_id, user_email, liked, disliked) VALUES (?, ?, 0, 1)",
+            (
+                story_id,
+                "admin2@example.com",
+            ),
+        )
+
     conn.commit()
 
-def test_get_likes_dislikes_db(test_client):
+
+def test_get_likes_dislikes_db():
     """
     Test the get_likes_dislikes_db function to ensure it correctly counts likes and dislikes.
     """
@@ -193,7 +273,7 @@ def test_get_likes_dislikes_db(test_client):
     test_story_id = 123  # Example story ID
     expected_likes = 1
     expected_dislikes = 1
-    add_story_likes_for_testing(conn, test_story_id, expected_likes, expected_dislikes)
+    add_story_likes_for_testing(conn, test_story_id)
 
     # Call the function
     likes, dislikes = get_likes_dislikes_db(test_story_id)
@@ -208,54 +288,3 @@ def test_get_likes_dislikes_db(test_client):
     cursor.execute("DELETE FROM new_stories WHERE id = ?", (test_story_id,))
     conn.commit()
     conn.close()
-
-
-# def test_admin_access(test_client, test_admin_user):
-#     """
-#     GIVEN a Flask application and an admin user in the database
-#     WHEN the '/admin' page is requested (GET)
-#     THEN check that the response is valid and the admin user has access
-#     """
-#     with test_client:
-#         # Mock the login by setting the session manually
-#         with test_client.session_transaction() as sess:
-#             sess["user"] = {
-#                 "access_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9kZXYtd\
-#                 GVyY2FvajBsa3NpNnU1di51cy5hdXRoMC5jb20vIn0..cx9brb9zed6661pl.Qf2JuRWLldVmH02puUT1_\
-#                 2dALz5uEjv_qhzuryFGf_mOU4JYCXt9BN-myVZv6NyUVXEftVBrOvMGfq5OU-bZ6ZfVYYJ521LI0i8-ucF\
-#                 fyHvoAaS6ckbKNGkE4i1L_9bdzHuUh_2hn6duZPB2lb3RfnxVc4ahTg-B3sjqZsu9fzPbTgJOOaIWydORE\
-#                 0o83FeBGNW-omigZQr13CcDdMzqzPX-rl7rGYuQJYTD_r6W-FkC2SwQiCyCUPZx30gvDitw8v-CEcUORxU\
-#                 9gJ4GJYtXU-o8Lpmrs6bHmpSwIkRIPdH1qlm7OhlvOEllUK9Um-Qmh39ezkypv5_KpAI_Acb5ukJP.Y66K\
-#                 0nCgyAaEBW1VPY1j2Q",  # Mock value
-#                 "expires_at": 1701536759,
-#                 "expires_in": 86400,
-#                 "id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJtTE9sV1RnelZ6c0VDRXBoM\
-#                 k53TCJ9.eyJuaWNrbmFtZSI6ImFkbWluIiwibmFtZSI6ImFkbWluQGV4YW1wbGUuY29tIiwicGljdHVyZS\
-#                 I6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyL2U2NGM3ZDg5ZjI2YmQxOTcyZWZhODU0ZDEzZDdk\
-#                 ZDYxP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGYWQucG\
-#                 5nIiwidXBkYXRlZF9hdCI6IjIwMjMtMTItMDFUMTc6MDU6NTkuMDg4WiIsImVtYWlsIjoiYWRtaW5AZXhh\
-#                 bXBsZS5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImlzcyI6Imh0dHBzOi8vZGV2LXRlcmNhb2owbG\
-#                 tzaTZ1NXYudXMuYXV0aDAuY29tLyIsImF1ZCI6ImZuamwxVWkzTEZwRGtCS3RPREh4TTFDQlZSVm5rU0Za\
-#                 IiwiaWF0IjoxNzAxNDUwMzU5LCJleHAiOjE3MDE0ODYzNTksInN1YiI6ImF1dGgwfDY1NmEwZGY1NmE4Mj\
-#                 JmN2VlODM4NDMxZSIsInNpZCI6IjBpeFFQTzg5VVhyZmNoSG1UaTJlYi1PelhQTmJYMjlzIiwibm9uY2Ui\
-#                 OiJMVVEzOEJ1UU1LbTJZWGlMV3ZkYiJ9.f2BWslYGBkZcdWlI_f5T8ra8yDMQNO7N0du8fHqn94e-cOg7M\
-#                 yOlkxQhk2WlYnIgfXLODeUeVcU8btTvyjhTfLqfoDE66x4K9LIvF707gnWFQOwGdXcgtvzscR7uROfYgo7\
-#                 G8HMBw-NFDju4VW57eFyXyEEjnVYTSm3ySpxxuisngFBgUlgUx-atzhiZDXegA2WJsgqI7I3z61REKvziJ\
-#                 ViOXLcdi8uoDQSEnOcrJe8wCRgtlkJkO2sNIc-3DLAQR6dc4t__8KXRaSRz3QROQ-MsB4wbomktL2eeMWN\
-#                 HAiXS4kId_VpmA1peJ2laESPzIrqAc00kqP1B54x9RUweJA",  # Mock value
-#                 "scope": "openid profile email",
-#                 "token_type": "Bearer",
-#                 "userinfo": {
-#                     "email": "admin@example.com",
-#                     "name": "admin@example.com",
-#                     "nickname": "admin",
-#                     "picture": "https://example.com/avatar.jpg",
-#                     "sub": "auth0|656a0df56a822f7ee838431e",
-#                     "updated_at": "2023-12-01T17:05:59.088Z"
-#                 },
-#             }
-
-#         # Request the admin page
-#         response = test_client.get("/admin")
-#         assert response.status_code == 200
-#         # Add more assertions here to confirm the admin page loaded correctly
