@@ -5,6 +5,9 @@ server {
     server_name josebrouwer.me www.josebrouwer.me 45.79.152.30;
 
     # Redirect all traffic to HTTPS
+    if ($host = 45.79.152.30) {
+        return 301 https://josebrouwer.me$request_uri;
+    }
     return 301 https://$host$request_uri;
 }
 
