@@ -77,7 +77,8 @@ def login():
 @app.route("/signup")
 def signup():
     """
-    Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
+    Redirects the user to the Auth0 Universal Login 
+    (https://auth0.com/docs/authenticate/login/auth0-universal-login)
     """
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True),
@@ -133,20 +134,36 @@ def insert_user_into_db(data):
     )
     existing_user = cursor.fetchone()
 
+    email = data.get("userinfo", {}).get("email", "")
     if not existing_user:
         # Insert the user into the "users" table
-        cursor.execute(
+        if email == "chashimahiulislam@gmail.com": #check for chashi
+            cursor.execute(
             """
-            INSERT INTO users (email, name, nickname, picture)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO users (email, name, nickname, picture, admin)
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
                 data.get("userinfo", {}).get("email", ""),
                 data.get("userinfo", {}).get("name", ""),
                 data.get("userinfo", {}).get("nickname", ""),
                 data.get("userinfo", {}).get("picture", ""),
+                1,
             ),
         )
+        else:
+            cursor.execute(
+                """
+                INSERT INTO users (email, name, nickname, picture)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    data.get("userinfo", {}).get("email", ""),
+                    data.get("userinfo", {}).get("name", ""),
+                    data.get("userinfo", {}).get("nickname", ""),
+                    data.get("userinfo", {}).get("picture", ""),
+                ),
+            )
 
     connection.commit()
     connection.close()
