@@ -89,4 +89,4 @@
 - The `run_fetch.sh` script is used to fetch the latest news stories and should be set to run periodically (e.g., via a cron job).
 
 ## Mozilla Security Report
-![Mozilla Report](images/Mozilla_Observatory____Scan_Results_for_josebrouwer.me.pdf)
+![Mozilla Report](images/Mozilla_Score.png)
