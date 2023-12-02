@@ -30,15 +30,10 @@ from urllib.parse import quote_plus, urlencode
 from os import environ as env
 import math
 
-# import requests
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, redirect, render_template, session, url_for, jsonify, request
 from login import login_required, admin_required
-
-class TestingConfig:
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
 
 ITEMS_PER_PAGE = 10
 
@@ -123,7 +118,6 @@ def insert_user_into_db(data):
     Extracts user information from the session and inserts it into the 'users' table.
     Commits changes to the database and closes the connection.
     """
-    #data = session.get("user")
     connection = sqlite3.connect("stories.db")
     cursor = connection.cursor()
 
