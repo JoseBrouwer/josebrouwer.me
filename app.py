@@ -131,33 +131,18 @@ def insert_user_into_db(data):
     email = data.get("userinfo", {}).get("email", "")
     if not existing_user:
         # Insert the user into the "users" table
-        if email == "chashimahiulislam@gmail.com": #check for chashi
-            cursor.execute(
+        cursor.execute(
             """
-            INSERT INTO users (email, name, nickname, picture, admin)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (email, name, nickname, picture)
+            VALUES (?, ?, ?, ?)
             """,
             (
                 data.get("userinfo", {}).get("email", ""),
                 data.get("userinfo", {}).get("name", ""),
                 data.get("userinfo", {}).get("nickname", ""),
                 data.get("userinfo", {}).get("picture", ""),
-                1,
             ),
         )
-        else:
-            cursor.execute(
-                """
-                INSERT INTO users (email, name, nickname, picture)
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    data.get("userinfo", {}).get("email", ""),
-                    data.get("userinfo", {}).get("name", ""),
-                    data.get("userinfo", {}).get("nickname", ""),
-                    data.get("userinfo", {}).get("picture", ""),
-                ),
-            )
 
     connection.commit()
     connection.close()
