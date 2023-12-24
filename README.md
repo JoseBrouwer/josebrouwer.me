@@ -87,6 +87,7 @@
 ## Notes
 - The `run_pytest.sh` script sets the `PYTHONPATH` environment variable for the duration of the script's execution to ensure that pytest can find all necessary modules.
 - The `run_fetch.sh` script is used to fetch the latest news stories and should be set to run periodically (e.g., via a cron job).
+- Logo generated with DALL*E
 
 ## Mozilla Security Report
 ![Mozilla Report](images/Mozilla_Score.png)
