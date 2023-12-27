@@ -185,6 +185,33 @@ def home():
         pretty=json.dumps(session.get("user"), indent=4),
     )
 
+@app.route("/resume")
+def resume():
+    """
+    Renders the resume page of the application.
+
+    Displays a resume page.
+    Returns a rendered HTML template for the resume page.
+    """
+    return render_template("resume.html")
+@app.route("/projects")
+def projects():
+    """
+    Renders the projects page of the application.
+
+    Displays a projects page.
+    Returns a rendered HTML template for the projects page.
+    """
+    return render_template("projects.html")
+@app.route("/about")
+def about():
+    """
+    Renders the about page of the application.
+
+    Displays an about page.
+    Returns a rendered HTML template for the about page.
+    """
+    return render_template("about.html")
 
 @app.route("/profile")
 @login_required

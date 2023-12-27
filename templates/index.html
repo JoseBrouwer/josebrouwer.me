@@ -8,35 +8,56 @@
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
   </head>
   <body>
-    
     {% include 'navbar.html' %}
-
-    <!-- <div>
-      <pre>{{pretty}}</pre>
-    </div> -->
-    <div class="container my-5">
-      <div class="card shadow-lg">
-        <div class="card-body">
-          <div class="row g-0 align-items-center">
-            <div class="col-md-8">
-              <div class="card-text">
-                <h2>Welcome to my website!</h2>
-                <p>Please log in or create an account to access other areas of the page.</p>
-                <p>With Auth0 signing up or logging in is easy. You can create an account or you can continue with your
-                  google account. All of your information is kept safe and managed by Auth0.</p>
-                <p>Using the HackerNews API I pulled their top stories, filtering by time and score and styling for a modern
-                  look, and displayed them right on the "news" page!</p>
-              </div>
-            </div>
-            <div class="col-md-4 d-flex justify-content-center">
-              <img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid rounded-start"
-                style="max-width: 50%; height: auto;">
+    
+    <div class="container my-4 center-align">
+      <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active" data-bs-interval="5000">
+            <img src="{{ url_for('static', filename='logo.png') }}" class="d-block w-50" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h2>About Me</h2>
+              <p>I'm Jose Brouwer, a Software Engineer. Here you'll find my projects, resume, and more about me. You can also access my HackerNews Newsfeed page by logging in with Auth0.</p>
             </div>
           </div>
         </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="d-block w-50" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2>My Resume</h2>
+            <a href="{{ url_for('static', filename='resume.pdf') }}" class="btn btn-primary">Download Resume</a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="d-block w-50" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2>Projects</h2>
+            <p>Here you can find direct links to my Github and the source code for this website along with a 
+              Sorting Algorithm Timing program which can be used to create plots of the results. 
+            </p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="d-block w-50" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2>Interests</h2>
+            <p>From Video Games, Full-Stack, and Algorithms to Computer Hardware, Graphics, and multithreading.
+              These are some of the topics I am looking to further my knowledge in and work on projects
+              that challenge me in these areas. Outside of Computer Science, I enjoy rock Rock Climbing, and working out!
+            </p>
+          </div>
+        </div>
       </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
 </html>
