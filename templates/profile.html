@@ -15,42 +15,49 @@
     {% include 'navbar.html' %} 
 
     <div class="container my-5">
-        <h1 class="center-align">Profile: {{user_info.name}}</h1>
-        <div><img class="center-align" src="{{ user_info.picture }}" alt="{{ user_info.name }}'s Picture"></div>
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <img src="{{ user_info.picture }}" class="rounded-circle img-fluid mb-3" alt="{{ user_info.name }}'s Picture">
+                <h2 class="card-title">Profile: {{ user_info.name }}</h2>
+                <!-- Other user details can go here -->
+            </div>
+        </div>
+
         {% for item in liked_feed %}
-        <div class="custom-card" data-id="{{ item.id }}">
-            <div class="card mb-3">
-                {% if item.liked %}
-                    <div class="card-header like">
-                        <h2 class="card-title">{{ item.title }}</h2>
-                    </div>
-                {% elif item.disliked %}
-                    <div class="card-header dislike">
-                        <h2 class="card-title">{{ item.title }}</h2>
-                    </div>
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-subtitle mb-2 text-muted">
-                        <strong>Author:</strong> {{ item.by }}
-                        <br>
-                        <strong>Hacker News Score:</strong> {{ item.score }}
-                        <br>
-                        <strong>Time:</strong> {{ item.time }}
-                        <br>
-                        <strong>Link:</strong> <a href="{{ item.url }}" target="_blank" class="btn btn-info">{{ item.url }}</a>
-                    </h5>
-                    <p class="card-text">{{ item.text|safe }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- {% if item.liked %}
-                        <button type="button" class="btn btn-success" data-id="{{ item.id }}">Liked</button>
-                        {% elif item.disliked %}
-                        <button type="button" class="btn btn-danger" data-id="{{ item.id }}">Disiked</button>
-                        {% endif %} -->
-                        <button type="button" class="btn btn-outline-danger delete-button" data-id="{{ item.id }}">Delete</button>
+            <div class="custom-card" data-id="{{ item.id }}">
+                <div class="card mb-3">
+                    {% if item.liked %}
+                        <div class="card-header like">
+                            <h2 class="card-title">{{ item.title }}</h2>
+                        </div>
+                    {% elif item.disliked %}
+                        <div class="card-header dislike">
+                            <h2 class="card-title">{{ item.title }}</h2>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-subtitle mb-2 text-muted">
+                            <strong>Author:</strong> {{ item.by }}
+                            <br>
+                            <strong>Hacker News Score:</strong> {{ item.score }}
+                            <br>
+                            <strong>Time:</strong> {{ item.time }}
+                            <br>
+                            <strong>Link:</strong> <a href="{{ item.url }}" target="_blank" class="btn btn-info">{{ item.url }}</a>
+                        </h5>
+                        <p class="card-text">{{ item.text|safe }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- {% if item.liked %}
+                            <button type="button" class="btn btn-success" data-id="{{ item.id }}">Liked</button>
+                            {% elif item.disliked %}
+                            <button type="button" class="btn btn-danger" data-id="{{ item.id }}">Disiked</button>
+                            {% endif %} -->
+                            <button type="button" class="btn btn-outline-danger delete-button" data-id="{{ item.id }}">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 

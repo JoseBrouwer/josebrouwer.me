@@ -5,6 +5,8 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -12,7 +14,15 @@
             <a class="navbar-brand" href="/">
               <img class="logo" src="{{ url_for('static', filename='logo.png') }}">
             </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Social Media Icons -->
+            <a class="nav-link mx-2" href="https://github.com/JoseBrouwer" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+            <a class="nav-link mx-2" href="https://www.linkedin.com/in/jose-brouwer-a54703232/" target="_blank">
+              <i class="fab fa-linkedin"></i>
+            </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -20,6 +30,9 @@
             {% if session %}
               <li class="nav-item">
                 <a class="nav-link active" href="/news">News</a>
+              </li>
+              <li class="nav-item"></li>
+                <a class="nav-link active" href="{{ url_for('static', filename='resume.pdf') }}" target="_blank">Resume</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -31,8 +44,8 @@
                 </ul>
               </li>
             {% else %}
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-current="page" href="/">Home</a>
+              <li class="nav-item"></li>
+                <a class="nav-link active" href="{{ url_for('static', filename='resume.pdf') }}" target="_blank">Resume</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link disabled" href="/news">News</a>

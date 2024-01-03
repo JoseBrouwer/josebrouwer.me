@@ -64,6 +64,18 @@ footer {
     max-height: 50px;
     max-width: 50px;
 }
+.carousel-image {
+    width: 100%;
+    /* Full width of the column */
+    height: 50%;
+    /* Fixed height */
+    /*object-fit: cover;*/
+    /* This will cover the area without stretching the image */
+}
+.text-container {
+    padding-right: 15px;
+    margin-right: 15px;
+}
 
 
 /* Apply styles to all links */
