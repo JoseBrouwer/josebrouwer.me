@@ -2,7 +2,7 @@
 *.db
 *.pyc
 *.log
-/venv/
+venv/
 .env
 .coverage
 tests/coverage
