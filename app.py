@@ -184,6 +184,19 @@ def home():
         session=session.get("user"),
         pretty=json.dumps(session.get("user"), indent=4),
     )
+@app.route("/land")
+def land():
+    """
+    Renders the home page of the application.
+
+    Displays a welcome message and user session details if logged in.
+    Returns a rendered HTML template for the home page.
+    """
+    return render_template(
+        "landing.html",
+        session=session.get("user"),
+        pretty=json.dumps(session.get("user"), indent=4),
+    )
 
 @app.route("/resume")
 def resume():

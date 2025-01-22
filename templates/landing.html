@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Landing Page</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='landing.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="block-centered">
+                    <div class="main-text">Welcome!</div>
+                    <div class="secondary-text">I'm Jose Brouwer, a Software Engineer. Here you'll find my projects, resume, and more about me. You can also access my HackerNews Newsfeed page by logging in or signing up with Auth0.</div>
+                    <button class="signup">Sign-Up</button>
+                </div>
+            </div>
+            <img class="hero-image" src="../static/Landing-Image.jpg"></div>
+        </div>
+
+        <div class="gallery-container">
+            <p class="gallery-header-text">My Projects</p>
+            
+            <div class="gallery-item-container">
+                <div class="gallery-item">
+                    <img class="gallery-image" src="../static/source-code.png">
+                    <a href="https://github.com/JoseBrouwer/josebrouwer.me" target="_blank" class="gallery-text">Click here to see the GitHub Repository for this website!</a>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="images/beach.jpg">
+                    <p class="gallery-text">This is some subtext under an image</p>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="images/beach.jpg">
+                    <p class="gallery-text">This is some subtext under an image</p>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="images/beach.jpg">
+                    <p class="gallery-text">This is some subtext under an image</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="quote-container">
+            <p class="quote">This is an inspiring quote or testimonial from a customer. Maybe it's just filling up space, or maybe people will actually read it. Who knows? All I know is that it looks nice.</p>
+            <p class="signed">-Someone</p>
+        </div>
+
+        <div class="banner-container">
+
+        </div>
+
+        <footer>
+            Jose Brouwer 2025
+        </footer>
+    </body>
+</html>
