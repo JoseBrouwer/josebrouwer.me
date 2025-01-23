@@ -123,29 +123,36 @@ header {
     text-decoration: underline;
 }
 
-.quote-container{
+.odin-container{
     width: 100vw;
     background-color: #e5e7eb;
     display: flex;
     flex-direction: column;
 }
-.quote {
-    width: 50%;
-
+.odin-header-text {
+    font-size: 36px;
+    color: #1f1f1f;
+    font-weight: 900;
+    text-decoration: underline;
+    
     margin: 0 auto;
     padding: 20px;
-    font-size: 36px;
-    font-style: italic;
-    color: #1f2937;
 }
-.signed {
-    align-self: flex-end; /* Align the signature to the right */
-    margin-right: 30%; /* Match the padding or alignment of the quote */
-    padding-bottom: 20px;
-    font-size: 26px;
-    color: #1f2937;
-
-    font-weight: 900;
+.odin-header-text:hover {
+    color: #91b6ff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.odin-text {
+    color: #1f1f1f;
+    max-width: 250px;
+    text-align: center;
+    text-decoration: underline;
+}
+.odin-text:hover {
+    color: #91b6ff;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 footer {
