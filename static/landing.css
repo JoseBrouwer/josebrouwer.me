@@ -6,7 +6,7 @@
 }
 
 .header-container {
-    width: 100vw;
+    width: 90vw;
     background-color: #1f2937;
 }
 
@@ -76,10 +76,16 @@ header {
 .hero-image {
     width: 30%;
     height: auto;
-    max-height: 300px;
-    margin: 20px 10% 20px 0;
+    max-height: 400px;
+    margin: 20px 15% 20px 0;
+    /* object-fit: cover; */
 }
-
+.interest-image {
+    width: 30%;
+    height: auto;
+    max-height: 400px;
+    margin: 20px 15% 20px 0;
+}
 .gallery-container {
     width: 100vw;
     display: flex;
@@ -166,7 +172,7 @@ header {
 
 footer {
     width: 100vw;
-    background-color: #1f2937;
+    background-color: rgb(33, 37, 41);
     color: #f9faf8;
 
     margin: 0 auto;
