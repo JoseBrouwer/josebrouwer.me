@@ -3,10 +3,11 @@
     font-family: 'Roboto', sans-serif;
     margin: 0px;
     padding: 0px;
+    overflow-x: hidden;
 }
 
 .header-container {
-    width: 90vw;
+    width: 100vw;
     background-color: #1f2937;
 }
 
@@ -194,13 +195,13 @@ footer {
         text-align: center;
         width: 100%;
     }
-    
-
     .block-centered {
         margin: 0;
         max-width: 90%;
     }
-
+    .hero-content .main-text {
+        font-size: 36px;
+    }
     .hero-image, .interest-image {
         width: 80%;
         max-height: 300px;
