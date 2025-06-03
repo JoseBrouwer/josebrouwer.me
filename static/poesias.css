@@ -1,0 +1,6 @@
+.flex-container {
+    margin: 10%;
+    display: flex;
+    border: 1px solid white;
+    justify-content: space-around;
+}
