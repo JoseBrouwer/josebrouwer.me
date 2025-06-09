@@ -1,6 +1,24 @@
+body {
+    background-image: url("playa.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 .flex-container {
     margin: 10%;
     display: flex;
-    border: 1px solid white;
-    justify-content: space-around;
+    background-color: rgba(0,0,0,.6);
+}
+.portrait {
+    margin: 2rem 0 2rem 2rem;
+    align-self: center;
+}
+.description {
+    margin: 2rem 2rem 2rem 5rem;
+    font-size: 20px;
+    justify-items: center;
+    align-self: center;
+}
+.view-poetry {
+    width: 17rem;
+    height: 3rem;
 }
