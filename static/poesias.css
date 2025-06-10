@@ -1,0 +1,54 @@
+body {
+    background-image: url("bosque.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.flex-container {
+    margin: 10%;
+    display: flex;
+    background-color: rgba(0,0,0,.6);
+}
+.portrait {
+    margin: 2rem 0 2rem 2rem;
+    align-self: center;
+}
+.description {
+    margin: 2rem 2rem 2rem 5rem;
+    font-size: 20px;
+    justify-items: center;
+    align-self: center;
+}
+.btn.btn-success.view-poetry {
+    width: 17rem;
+    height: 3rem;
+    font-size: large;
+    margin: 1rem 0;
+}
+.dedication {
+    margin-left: 2rem;
+}
+
+@media (width <= 1500px){
+    .flex-container {
+        flex-direction: column;
+    }
+    .portrait {
+        margin: 2rem 0;
+        min-width: 0;
+        flex-shrink: 1;
+    }
+    img {
+        width: 100%;
+        height: auto;
+    }
+    .description {
+        margin: 2rem 2rem 2rem 2rem;
+    }
+}
+
+@media (max-width: 768px){
+    .portrait {
+        margin:0;
+    }
+
+}

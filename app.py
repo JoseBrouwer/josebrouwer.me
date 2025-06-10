@@ -194,24 +194,15 @@ def resume():
     Returns a rendered HTML template for the resume page.
     """
     return render_template("resume.html")
-@app.route("/projects")
+@app.route("/poesias")
 def projects():
     """
-    Renders the projects page of the application.
+    Renders my grandmother's poetry page of the application.
 
-    Displays a projects page.
-    Returns a rendered HTML template for the projects page.
+    Displays a page dedicated to my grandmother's poetry.
+    Returns a rendered HTML template for the poetry page.
     """
-    return render_template("projects.html")
-@app.route("/about")
-def about():
-    """
-    Renders the about page of the application.
-
-    Displays an about page.
-    Returns a rendered HTML template for the about page.
-    """
-    return render_template("about.html")
+    return render_template("thelma.html")
 
 @app.route("/profile")
 @login_required
