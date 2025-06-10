@@ -14,9 +14,13 @@
         <div class="flex-container">
             <div class="portrait">
                 <img src="../static/portrait.jpg">
+                <p class="dedication">Te amo mamá - José Bernardo</p>
             </div>
             <div class="description">
                 <h1>Thelma Leo Peña</h1>
+                <a target="_blank" href="{{ url_for('static', filename='Thelma_Leo_Peña-Poesias.pdf') }}">
+                    <button class="btn btn-success view-poetry">Ver Poesías</button>
+                </a>
                 <p lang="es">
                     Mis poemas van cubriendo mi alma a través de los días, meses y años 
                     de mi existencia. Son la esperanza y sobretodo, vivencias y 
@@ -37,11 +41,7 @@
                     sabatino periódico Listín Diario; otras, reconocidas por el Centro 
                     Ateneo dominicano, en tiempos allá. <br><br> Nada importa, son poemas, que quedan en el tiempo y en la verdad de nuestras vidas. - 2024
                 </p>
-                <a target="_blank" href="{{ url_for('static', filename='Thelma_Leo_Peña-Poesias.pdf') }}">
-                    <button class="btn btn-success view-poetry">Ver Poesías</button>
-                </a>
             </div>
         </div>
-        
     </body>
 </html>
